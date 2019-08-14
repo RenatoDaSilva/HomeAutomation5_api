@@ -1,0 +1,264 @@
+Gerando nosso Projeto       
+
+1 – Rode no console
+
+rails new HomeAutomation5_api --api
+
+Versionando a API            
+
+Crie um arquivo chamado controllers/api/v1/api_controller.rb e coloque nele:
+
+module Api::V1
+ class ApiController < ApplicationController
+   # Métodos globais
+ end
+end
+
+
+
+Habilitando o CORS          
+
+Acrescente no seu Gemfile:
+
+gem 'rack-cors'
+gem 'rack-attack'
+gem 'devise'
+gem 'simple_token_authentication', '~> 1.0'
+
+Instale as gems rodando:
+
+bundle install
+
+Acrescente no seu config/application.rb:
+
+config.middleware.insert_before 0, Rack::Cors do
+ allow do
+   origins '*'
+   resource '*',
+     headers: :any,
+     methods: %i(get post put patch delete options head)
+ end
+end
+config.middleware.use Rack::Attack
+
+
+
+Crie um arquivo config/initializers/rack_attack.rb e coloque nele:
+
+class Rack::Attack
+ Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
+ # Allow all local traffic
+ safelist('allow-localhost') do |req|
+   '127.0.0.1' == req.ip || '::1' == req.ip
+ end
+ 
+ # Allow an IP address to make 10 requests every 10 seconds
+ throttle('req/ip', limit: 5, period: 5) do |req|
+   req.ip
+ end
+ 
+ # Throttle login attempts by email address
+ #throttle("logins/email", limit: 5, period: 20.seconds) do |req|
+ #  if req.path == '/users/sign_in' && req.post?
+ #    req.params['email'].presence
+ #  end
+ #end
+end
+
+
+
+Em config/environments/development.rb coloque:
+
+config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+
+Rode no console:
+
+rails generate devise:install
+rails generate devise User
+rails g migration addNameToUser name:string
+rails g migration add_authentication_token_to_users "authentication_token:string{30}:uniq"
+rails db:migrate
+
+
+Adicione ao seu User Model app/models/user.rb:
+
+acts_as_token_authenticatable
+
+
+
+Coloque no seu controler api/v1/api_controller.rb:
+
+acts_as_token_authentication_handler_for User
+before_action :require_authentication!
+private
+def require_authentication!
+  throw(:warden, scope: :user) unless current_user.presence
+end
+ 
+
+
+ 
+de commit aqui
+
+Desenvolvendo e testando nossa API
+
+
+Gerando nossos Models       
+
+Rode no console:
+
+rails g model Device name:string pin:integer state:boolean user:references
+rails db:migrate
+
+
+
+Adicione ao seu Model Device:
+
+validates :name, :user, presence: true
+
+
+
+Adicione ao seu Model User:
+
+has_many :devices, dependent: :destroy
+
+
+
+Gerando nossos Controllers     
+
+Rode no console:
+
+rails g controller api/v1/devices
+
+
+
+
+
+Coloque no controller gerado:
+
+class Api::V1::DevicesController < Api::V1::ApiController
+ 
+ before_action :set_device, only: [:show, :update, :destroy]
+ 
+ before_action :require_authorization!, only: [:show, :update, :destroy]
+ 
+ # GET /api/v1/devices
+ 
+ def index
+ 
+   @devices = current_user.devices
+ 
+   render json: @devices
+ 
+ end
+ 
+ # GET /api/v1/devices/1
+ 
+ def show
+ 
+   render json: @device
+ 
+ end
+ 
+ # POST /api/v1/devices
+ 
+ def create
+ 
+   @device = Device.new(device_params.merge(user: current_user))
+ 
+   if @device.save
+ 
+     render json: @device, status: :created
+ 
+   else
+ 
+     render json: @device.errors, status: :unprocessable_entity
+ 
+   end
+ 
+ end
+ 
+ # PATCH/PUT /api/v1/devices/1
+ 
+ def update
+ 
+   if @device.update(device_params)
+ 
+     render json: @device
+ 
+   else
+ 
+     render json: @device.errors, status: :unprocessable_entity
+ 
+   end
+ 
+ end
+ 
+ # DELETE /api/v1/devices/1
+ 
+ def destroy
+ 
+   @device.destroy
+ 
+ end
+ 
+ private
+ 
+   # Use callbacks to share common setup or constraints between actions.
+ 
+   def set_device
+ 
+     @device = Device.find(params[:id])
+ 
+   end
+ 
+   # Only allow a trusted parameter "white list" through.
+ 
+   def device_params
+ 
+     params.require(:device).permit(:name, :email, :phone, :description)
+ 
+   end
+ 
+   def require_authorization!
+ 
+     unless current_user == @device.user
+ 
+       render json: {}, status: :forbidden
+ 
+     end
+ 
+   end
+ 
+end
+
+
+
+
+
+
+
+Ajustando as Rotas    
+
+Atualize o seu arquivo routes.rb colocando:
+
+Rails.application.routes.draw do
+  devise_for :users
+  namespace :api do
+    namespace :v1 do
+      resources :devices
+    end
+  end
+ 
+  # constraints subdomain: 'api' do
+  #   scope module: 'api' do
+  #     namespace :v1 do
+  #       resources :devices
+  #     end
+  #   end
+  # end
+end
+Testando nossos endpoints     
+
+Teste usando Postman ou CURL como no vídeo
+
