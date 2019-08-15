@@ -3,11 +3,9 @@
 one:
   name: MyString
   pin: 1
-  state: false
   user: one
 
 two:
   name: MyString
   pin: 1
-  state: false
   user: two

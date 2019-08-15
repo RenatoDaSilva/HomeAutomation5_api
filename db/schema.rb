@@ -10,12 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_14_025756) do
+ActiveRecord::Schema.define(version: 2019_08_15_023357) do
 
   create_table "devices", force: :cascade do |t|
     t.string "name"
     t.integer "pin"
-    t.boolean "state"
     t.integer "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

@@ -44,13 +44,13 @@ class Api::V1::DevicesController < Api::V1::ApiController
     private
       # Use callbacks to share common setup or constraints between actions.
       def set_device
-#        @device = Device.find(params[:id])
-        @device = Device.find_by_pin(params[:id])
+        @device = Device.find(params[:id])
+#        @device = Device.find_by_pin(params[:id])
       end
     
       # Only allow a trusted parameter "white list" through.
       def device_params
-        params.require(:device).permit(:name, :pin, :state)
+        params.require(:device).permit(:name, :pin)
       end
     
       def require_authorization!
