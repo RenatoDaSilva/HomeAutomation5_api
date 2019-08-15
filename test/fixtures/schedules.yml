@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  pin: 1
+  state: 1
+  fire_on: 2019-08-15 00:13:36
+  user: one
+
+two:
+  pin: 1
+  state: 1
+  fire_on: 2019-08-15 00:13:36
+  user: two

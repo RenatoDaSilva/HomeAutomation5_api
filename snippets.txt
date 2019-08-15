@@ -266,3 +266,15 @@ Testando nossos endpoints
 
 Teste usando Postman ou CURL como no vídeo
 
+
+
+
+
+Creating schedule:
+
+rails g model Schedule pin:integer state:integer fire_on:datetime user:references
+rails db:migrate
+
+
+Criar um arquivo app/controllers/api/v1/schedules_controller.rb:
+
