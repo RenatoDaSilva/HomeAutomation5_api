@@ -112,13 +112,13 @@ rails db:migrate
 
 
 
-Adicione ao seu Model Device:
+Adicione ao seu Model Device app/models/device.rb:
 
 validates :name, :user, presence: true
 
 
 
-Adicione ao seu Model User:
+Adicione ao seu Model User app/models/user.rb:
 
 has_many :devices, dependent: :destroy
 
@@ -216,7 +216,7 @@ class Api::V1::DevicesController < Api::V1::ApiController
  
    def device_params
  
-     params.require(:device).permit(:name, :email, :phone, :description)
+     params.require(:device).permit(:name, :pin, :status)
  
    end
  
@@ -258,6 +258,10 @@ Rails.application.routes.draw do
   #   end
   # end
 end
+
+
+
+
 Testando nossos endpoints     
 
 Teste usando Postman ou CURL como no vídeo
