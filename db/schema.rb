@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_15_032953) do
+ActiveRecord::Schema.define(version: 2019_08_15_031336) do
 
   create_table "devices", force: :cascade do |t|
     t.string "name"
@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(version: 2019_08_15_032953) do
   create_table "schedules", force: :cascade do |t|
     t.integer "pin"
     t.integer "state"
-    t.datetime "fire_on", default: "2019-08-15 03:31:13"
+    t.datetime "fire_on"
     t.integer "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
