@@ -6,7 +6,6 @@ class User < ApplicationRecord
 
   acts_as_token_authenticatable
 
-  has_many :devices, dependent: :destroy
   has_many :schedules, dependent: :destroy
 
 end

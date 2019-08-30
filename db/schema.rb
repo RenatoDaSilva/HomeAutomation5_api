@@ -10,16 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_15_031336) do
-
-  create_table "devices", force: :cascade do |t|
-    t.string "name"
-    t.integer "pin"
-    t.integer "user_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["user_id"], name: "index_devices_on_user_id"
-  end
+ActiveRecord::Schema.define(version: 2019_08_30_014101) do
 
   create_table "schedules", force: :cascade do |t|
     t.integer "pin"
@@ -46,6 +37,5 @@ ActiveRecord::Schema.define(version: 2019_08_15_031336) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "devices", "users"
   add_foreign_key "schedules", "users"
 end
