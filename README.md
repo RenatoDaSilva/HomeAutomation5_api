@@ -2,11 +2,11 @@
 
 **Ruby version: 2.6.3p62**
 
-##Authentication:
+## Authentication:
 `X-User-Email:name@mail.com`
 `X-User_Token:-Token-`
 
-##API use:
+## API use:
 
 `GET /api/v1/schedules.json`
 
@@ -43,7 +43,7 @@ response sample:
 ]
 
 ```
-`DELETE /api/v1/schedules/3`
+`GET /api/v1/schedules/3`
 
 response:
 ```json
