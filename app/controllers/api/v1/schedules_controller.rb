@@ -1,5 +1,4 @@
-# class Api::V1::SchedulesController < ApplicationController
-# end
+require 'active_support/core_ext'
 
 class Api::V1::SchedulesController < Api::V1::ApiController
  
@@ -38,7 +37,25 @@ class Api::V1::SchedulesController < Api::V1::ApiController
   
   # DELETE /api/v1/schedules/1
   def destroy
-    @schedule.destroy
+   if @schedule.rate.blank?
+      @schedule.destroy
+   else
+
+    case @schedule.interval
+    when 1
+      @schedule.fire_on += @schedule.rate.minutes
+    when 2
+      @schedule.fire_on += @schedule.rate.hours
+    else
+      @schedule.fire_on += @schedule.rate.days
+    end
+
+    if @schedule.save
+       render json: @schedule
+      else
+        render json: @schedule.errors, status: :unprocessable_entity
+      end
+    end
   end
   
   private
@@ -49,7 +66,7 @@ class Api::V1::SchedulesController < Api::V1::ApiController
   
     # Only allow a trusted parameter "white list" through.
     def schedule_params
-      params.require(:schedule).permit(:pin, :state, :fire_on)
+      params.require(:schedule).permit(:pin, :state, :fire_on, :rate, :interval)
     end
   
     def require_authorization!
