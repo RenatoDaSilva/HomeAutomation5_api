@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :schedules
+      resources :reschedules
+      end
     end
   end
-end
