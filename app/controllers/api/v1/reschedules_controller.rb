@@ -1,10 +1,17 @@
 require 'active_support/core_ext'
+require 'date'
 
 class Api::V1::ReschedulesController < Api::V1::ApiController
  
   before_action :set_reschedule, only: [:show]
   before_action :require_authorization!, only: [:show]
   
+    # GET /api/v1/schedules
+    def index
+      @schedules = current_user.schedules
+      render json: @schedules.where("fire_on <= ?", DateTime.current.in_time_zone('Brasilia'))
+    end
+    
   # GET /api/v1/reschedules/1
   def show
     if @schedule.rate.blank?
